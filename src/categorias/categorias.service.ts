@@ -43,6 +43,24 @@ export class CategoriasService {
         return categoriaEncontrada
     }
 
+    async consultarCategoriaDoJogador(idJogador: any): Promise<Categoria> {
+
+       //await this.jogadoresService.consultarJogadorPeloId(idJogador)                                   
+
+       const jogadores = await this.jogadoresService.consultarTodosJogadores()
+
+       const jogadorFilter = jogadores.filter( jogador => jogador._id == idJogador._id )
+
+    
+       if (jogadorFilter.length == 0) {
+           throw new BadRequestException(`O id ${JSON.stringify(idJogador)} não é um jogador!`)
+       }
+
+        return await this.categoriaModel.findOne().where('jogadores').in(idJogador).exec() 
+
+    }
+
+
     async atualizarCategoria(categoria: string, atualizarCategoriaDto: AtualizarCategoriaDto): Promise<void> {
 
         const categoriaEncontrada = await this.categoriaModel.findOne({ categoria }).exec();
